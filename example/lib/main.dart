@@ -66,7 +66,6 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> onError(String error) {
     log("onSucconErroress:" + error);
-
     return Future.value();
   }
 }

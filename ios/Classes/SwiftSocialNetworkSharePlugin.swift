@@ -3,7 +3,7 @@ import UIKit
 import FBSDKShareKit
 import FBSDKCoreKit
 
-public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDelegate{
+public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDelegate , UISceneDelegate{
     var result: FlutterResult?
     var _channel: FlutterMethodChannel
     
@@ -136,7 +136,7 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
     }
     
     @available(iOS 13.0, *)
-    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    public func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let url = URLContexts.first?.url else {
             return
         }
