@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:social_network_share/social_network_share.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('social_network_share');
@@ -15,9 +14,5 @@ void main() {
 
   tearDown(() {
     channel.setMockMethodCallHandler(null);
-  });
-
-  test('getPlatformVersion', () async {
-    expect(await SocialNetworkShare.platformVersion, '42');
   });
 }

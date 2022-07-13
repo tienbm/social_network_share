@@ -33,9 +33,9 @@ class _MyAppState extends State<MyApp> {
           child: ListView(
             children: [
               TextButton(
-                child: const Text("Share on facebook"),
+                child: const Text("Share link to facebook"),
                 onPressed: () {
-                  shareOnFacebook();
+                  shareLinkToFacebook();
                 },
               ),
             ],
@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void shareOnFacebook() async {
+  void shareLinkToFacebook() async {
     await SocialNetworkShare.shareLinkToFacebook(
         url: "https://www.google.com",
         quote: "captions",
