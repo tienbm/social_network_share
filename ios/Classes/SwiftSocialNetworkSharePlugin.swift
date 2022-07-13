@@ -1,5 +1,7 @@
 import Flutter
 import UIKit
+import FBSDKShareKit
+import FBSDKCoreKit
 
 public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {

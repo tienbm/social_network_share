@@ -1,7 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:social_network_share/social_network_share.dart';
 
 void main() {
@@ -16,34 +17,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion =
-          await SocialNetworkShare.platformVersion ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   @override
@@ -54,9 +30,43 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: ListView(
+            children: [
+              TextButton(
+                child: const Text("Share on facebook"),
+                onPressed: () {
+                  shareOnFacebook();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void shareOnFacebook() async {
+    await SocialNetworkShare.shareLinkToFacebook(
+        url: "https://www.google.com",
+        quote: "captions",
+        onSuccess: onSuccess,
+        onCancel: onCancel,
+        onError: onError);
+  }
+
+  Future<void> onSuccess(String postId) {
+    log("onSuccess:" + postId);
+    return Future.value();
+  }
+
+  Future<void> onCancel() {
+    log("onCancel");
+    return Future.value();
+  }
+
+  Future<void> onError(String error) {
+    log("onSucconErroress:" + error);
+
+    return Future.value();
   }
 }
