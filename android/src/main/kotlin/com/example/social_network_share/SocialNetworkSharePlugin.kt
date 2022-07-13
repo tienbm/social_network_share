@@ -119,6 +119,7 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "social_network_share")
         channel.setMethodCallHandler(this)
+        callbackManager = CallbackManager.Factory.create()
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
