@@ -43,7 +43,7 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
             if let arguments = call.arguments as? [String:Any] {
                 let shareQuote = arguments["quote"] as! String?
                 let shareUrl = arguments["url"] as! String?
-                let hasTag = arguments["hashTag"] as! String?
+                let hashTag = arguments["hashTag"] as! String?
                 let requiredApp = arguments ["requiredApp"] as? Bool ?? false
                 shareLinkToFacebook(withQuote: shareQuote, withUrl:shareUrl, withHashTag:hashTag, withApp:requiredApp)
             }else{
