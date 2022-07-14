@@ -41,9 +41,9 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
         self.result = result
         if call.method == "shareLinkToFacebook" {
             if let arguments = call.arguments as? [String:Any] {
-                let shareQuote = arguments["quote"] as! String?
-                let shareUrl = arguments["url"] as! String?
-                let hashTag = arguments["hashTag"] as! String?
+                let shareQuote = arguments["quote"] as? String
+                let shareUrl = arguments["url"] as? String
+                let hashTag = arguments["hashTag"] as? String
                 let requiredApp = arguments ["requiredApp"] as? Bool ?? false
                 shareLinkToFacebook(withQuote: shareQuote, withUrl:shareUrl, withHashTag:hashTag, withApp:requiredApp)
             }else{
@@ -60,11 +60,15 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
     private func shareLinkToFacebook(withQuote quote: String?, withUrl urlString: String?,withHashTag hashTag: String?, withApp requiredApp: Bool) {
         
         if requiredApp {
-            let installed = checkAppInstalled(SocialNetworkApp.Facebook)
+            let installed = checkAppInstalled(SocialApp.Facebook)
             if installed {
                 shareToFacebook(withQuote:quote,urlString:urlString, withHashTag: hashTag)
             } else {
-                openAppStore(SocialNetworkApp.Facebook)
+                openAppStore(SocialApp.Facebook)
+                guard let result = self.result else {
+                    return
+                }
+                result(false)
             }
         }else{
             shareToFacebook(withQuote:quote,urlString:urlString, withHashTag: hashTag)
@@ -81,7 +85,7 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
             shareContent.quote = quoteString
         }
         
-        if let hashTagString = hashTag {            
+        if let hashTagString = hashTag {
             shareContent.hashtag = Hashtag(hashTagString)
         }
         
@@ -98,7 +102,7 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
     }
     
     
-    func checkAppInstalled(_ app:SocialNetworkApp) -> Bool {
+    func checkAppInstalled(_ app:SocialApp) -> Bool {
         var appScheme = "";
         switch app {
         case .Facebook:
@@ -115,7 +119,7 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
         return false;
     }
     
-    func getAppStoreLink(_ app:SocialNetworkApp) -> String {
+    func getAppStoreLink(_ app:SocialApp) -> String {
         switch app {
         case .Facebook:
             return "itms-apps://itunes.apple.com/us/app/apple-store/id284882215"
@@ -126,7 +130,7 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
         }
     }
     
-    func openAppStore(_ app:SocialNetworkApp)  {
+    func openAppStore(_ app:SocialApp)  {
         let appStoreLink = getAppStoreLink(app)
         if #available(iOS 10.0, *) {
             if let url = URL(string: appStoreLink) {
@@ -168,7 +172,7 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
     }
 }
 
-enum SocialNetworkApp {
+enum SocialApp {
     case Facebook
     case Instagram
     case Twitter
