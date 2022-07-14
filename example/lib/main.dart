@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 import 'package:social_network_share/social_network_share.dart';
 
@@ -46,26 +45,24 @@ class _MyAppState extends State<MyApp> {
   }
 
   void shareLinkToFacebook() async {
-    await SocialNetworkShare.shareLinkToFacebook(
+    SocialNetworkShare.shareLinkToFacebook(
         url: "https://www.google.com",
         quote: "captions",
+        hashTag: "#FlutterIsAwsome",
         onSuccess: onSuccess,
         onCancel: onCancel,
         onError: onError);
   }
 
-  Future<void> onSuccess(String postId) {
-    log("onSuccess:" + postId);
-    return Future.value();
+  void onSuccess(String? postId) {
+    log("onSuccess: $postId");
   }
 
-  Future<void> onCancel() {
+  void onCancel() {
     log("onCancel");
-    return Future.value();
   }
 
-  Future<void> onError(String error) {
-    log("onSucconErroress:" + error);
-    return Future.value();
+  void onError(String? error) {
+    log("onSucconErroress: $error");
   }
 }

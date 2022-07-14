@@ -10,6 +10,7 @@ import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.share.Sharer
+import com.facebook.share.model.ShareHashtag
 import com.facebook.share.model.ShareLinkContent
 import com.facebook.share.widget.ShareDialog
 
@@ -31,11 +32,12 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         if (call.method == "shareLinkToFacebook") {
-            var quote: String? = call.argument("quote")
-            var url: String? = call.argument("url")
-            var requiredApp: Boolean? = call.argument("requiredApp")
-            var required = requiredApp ?: true;
-            shareLinkToFacebook(url, quote, required, result)
+            val quote: String? = call.argument("quote")
+            val url: String? = call.argument("url")
+            val hashTag: String? = call.argument("hashTag")
+            val requiredApp: Boolean? = call.argument("requiredApp")
+            val required = requiredApp ?: true
+            shareLinkToFacebook(url, quote, hashTag, required, result)
         } else {
             result.notImplemented()
         }
@@ -43,34 +45,37 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
 
     private fun shareLinkToFacebook(
         url: String?,
-        quote: String?,
+        quote: String?, hashTag: String?,
         requiredAppInstalled: Boolean,
-        result: MethodChannel.Result
+        result: Result
     ) {
         if (requiredAppInstalled) {
             val pm = activity.packageManager
             val packageName = getSocialAppPackage(SocialNetworkApp.Facebook)
             try {
                 pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
-                shareToFacebook(quote, url, result)
+                shareToFacebook(quote, url, hashTag, result)
             } catch (e: PackageManager.NameNotFoundException) {
                 openPlayStore(SocialNetworkApp.Facebook)
                 result.success(false)
             }
         } else {
-            shareToFacebook(quote, url, result)
+            shareToFacebook(quote, url, hashTag, result)
         }
     }
 
-    private fun shareToFacebook(quote: String?, url: String?, result: MethodChannel.Result) {
+    private fun shareToFacebook(quote: String?, url: String?, hashTag: String?, result: Result) {
         val uri = Uri.parse(url)
+        val shareHashtag = ShareHashtag.Builder().setHashtag(hashTag).build()
         val content: ShareLinkContent =
-            ShareLinkContent.Builder().setContentUrl(uri).setQuote(quote).build()
+            ShareLinkContent.Builder().setContentUrl(uri).setQuote(quote)
+                .setShareHashtag(shareHashtag).build()
         val shareDialog = ShareDialog(activity)
         shareDialog.registerCallback(
             callbackManager,
             object : FacebookCallback<Sharer.Result> {
                 override fun onSuccess(result: Sharer.Result) {
+                    print("onSuccess" + result.postId)
                     channel.invokeMethod("onSuccess", result.postId)
                 }
 

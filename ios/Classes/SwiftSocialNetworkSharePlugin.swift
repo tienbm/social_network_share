@@ -43,8 +43,9 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
             if let arguments = call.arguments as? [String:Any] {
                 let shareQuote = arguments["quote"] as! String?
                 let shareUrl = arguments["url"] as! String?
+                let hasTag = arguments["hashTag"] as! String?
                 let requiredApp = arguments ["requiredApp"] as? Bool ?? false
-                shareLinkToFacebook(withQuote: shareQuote, withUrl:shareUrl, withApp:requiredApp)
+                shareLinkToFacebook(withQuote: shareQuote, withUrl:shareUrl, withHashTag:hashTag, withApp:requiredApp)
             }else{
                 guard let result = self.result else {
                     return
@@ -56,21 +57,21 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
         }
     }
     
-    private func shareLinkToFacebook(withQuote quote: String?, withUrl urlString: String?, withApp requiredApp: Bool) {
+    private func shareLinkToFacebook(withQuote quote: String?, withUrl urlString: String?,withHashTag hashTag: String?, withApp requiredApp: Bool) {
         
         if requiredApp {
             let installed = checkAppInstalled(SocialNetworkApp.Facebook)
             if installed {
-                shareToFacebook(withQuote:quote,urlString:urlString)
+                shareToFacebook(withQuote:quote,urlString:urlString, withHashTag: hashTag)
             } else {
                 openAppStore(SocialNetworkApp.Facebook)
             }
         }else{
-            shareToFacebook(withQuote:quote,urlString:urlString)
+            shareToFacebook(withQuote:quote,urlString:urlString, withHashTag: hashTag)
         }
     }
     
-    private func shareToFacebook(withQuote quote: String?, urlString: String?)
+    private func shareToFacebook(withQuote quote: String?, urlString: String?,withHashTag hashTag: String?)
     {
         let shareContent = ShareLinkContent()
         if let url = urlString {
@@ -78,6 +79,10 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
         }
         if let quoteString = quote {
             shareContent.quote = quoteString
+        }
+        
+        if let hashTagString = hashTag {            
+            shareContent.hashtag = Hashtag(hashTagString)
         }
         
         let dialog = ShareDialog(
@@ -137,17 +142,14 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
     
     public
     func sharer(_ sharer: Sharing, didCompleteWithResults results: [String : Any]) {
-        print ("Share Success")
         _channel.invokeMethod("onSuccess", arguments: nil)
     }
     
     public func sharer(_ sharer: Sharing, didFailWithError error: Error) {
-        print ("Share Error")
         _channel.invokeMethod("onError", arguments: error.localizedDescription)
     }
     
     public func sharerDidCancel(_ sharer: Sharing) {
-        print ("Share Cancel")
         _channel.invokeMethod("onCancel", arguments: nil)
     }
     
