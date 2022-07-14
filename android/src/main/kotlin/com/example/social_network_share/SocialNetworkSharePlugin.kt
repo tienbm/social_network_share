@@ -30,7 +30,7 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     private lateinit var channel: MethodChannel
     private lateinit var callbackManager: CallbackManager
 
-    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         if (call.method == "shareLinkToFacebook") {
             val quote: String? = call.argument("quote")
             val url: String? = call.argument("url")
@@ -47,16 +47,16 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         url: String?,
         quote: String?, hashTag: String?,
         requiredAppInstalled: Boolean,
-        result: Result
+        result: MethodChannel.Result
     ) {
         if (requiredAppInstalled) {
             val pm = activity.packageManager
-            val packageName = getSocialAppPackage(SocialNetworkApp.Facebook)
+            val packageName = getSocialAppPackage(SocialApp.Facebook)
             try {
                 pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
                 shareToFacebook(quote, url, hashTag, result)
             } catch (e: PackageManager.NameNotFoundException) {
-                openPlayStore(SocialNetworkApp.Facebook)
+                openPlayStore(SocialApp.Facebook)
                 result.success(false)
             }
         } else {
@@ -64,7 +64,7 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
     }
 
-    private fun shareToFacebook(quote: String?, url: String?, hashTag: String?, result: Result) {
+    private fun shareToFacebook(quote: String?, url: String?, hashTag: String?, result: MethodChannel.Result) {
         val uri = Uri.parse(url)
         val shareHashtag = ShareHashtag.Builder().setHashtag(hashTag).build()
         val content: ShareLinkContent =
@@ -95,7 +95,7 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
     }
 
-    private fun openPlayStore(app: SocialNetworkApp) {
+    private fun openPlayStore(app: SocialApp) {
         val packageName = getSocialAppPackage(app)
         try {
             val playStoreUri = Uri.parse("market://details?id=$packageName")
@@ -109,11 +109,11 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
     }
 
-    private fun getSocialAppPackage(app: SocialNetworkApp): String {
+    private fun getSocialAppPackage(app: SocialApp): String {
         return when (app) {
-            SocialNetworkApp.Facebook -> "com.facebook.katana"
-            SocialNetworkApp.Instagram -> "com.instagram.android"
-            SocialNetworkApp.Twitter -> "com.twitter.android"
+            SocialApp.Facebook -> "com.facebook.katana"
+            SocialApp.Instagram -> "com.instagram.android"
+            SocialApp.Twitter -> "com.twitter.android"
         }
     }
 
@@ -150,7 +150,7 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     }
 }
 
-enum class SocialNetworkApp {
+enum class SocialApp {
     Facebook, Instagram, Twitter
 }
 
