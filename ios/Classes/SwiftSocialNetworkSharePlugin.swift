@@ -3,7 +3,7 @@ import UIKit
 import FBSDKShareKit
 import FBSDKCoreKit
 
-public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDelegate , UISceneDelegate{
+public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDelegate ,  UIWindowSceneDelegate{
     var result: FlutterResult?
     var _channel: FlutterMethodChannel
     
@@ -38,13 +38,21 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        self.result = result
         if call.method == "shareLinkToFacebook" {
             if let arguments = call.arguments as? [String:Any] {
                 let shareQuote = arguments["quote"] as! String?
                 let shareUrl = arguments["url"] as! String?
                 let requiredApp = arguments ["requiredApp"] as? Bool ?? false
                 shareLinkToFacebook(withQuote: shareQuote, withUrl:shareUrl, withApp:requiredApp)
+            }else{
+                guard let result = self.result else {
+                    return
+                }
+                result(false)
             }
+        }else{
+            result(FlutterMethodNotImplemented)
         }
     }
     
@@ -78,6 +86,10 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
             delegate: self
         )
         dialog.show()
+        guard let result = self.result else {
+            return
+        }
+        result(true)
     }
     
     
@@ -123,15 +135,19 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
         }
     }
     
-    public func sharer(_ sharer: Sharing, didCompleteWithResults results: [String : Any]) {
+    public
+    func sharer(_ sharer: Sharing, didCompleteWithResults results: [String : Any]) {
+        print ("Share Success")
         _channel.invokeMethod("onSuccess", arguments: nil)
     }
     
     public func sharer(_ sharer: Sharing, didFailWithError error: Error) {
+        print ("Share Error")
         _channel.invokeMethod("onError", arguments: error.localizedDescription)
     }
     
     public func sharerDidCancel(_ sharer: Sharing) {
+        print ("Share Cancel")
         _channel.invokeMethod("onCancel", arguments: nil)
     }
     

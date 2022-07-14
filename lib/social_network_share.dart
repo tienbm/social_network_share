@@ -9,7 +9,7 @@ typedef OnSuccess = Future<void> Function(String postId);
 class SocialNetworkShare {
   static const MethodChannel _channel = MethodChannel('social_network_share');
 
-  static Future<void> shareLinkToFacebook({
+  static Future<bool> shareLinkToFacebook({
     String? quote,
     String? url,
     bool requiredApp = false,
@@ -35,6 +35,6 @@ class SocialNetworkShare {
           throw UnsupportedError("Unknown method called");
       }
     });
-    return _channel.invokeMethod('shareLinkToFacebook', params);
+    return await _channel.invokeMethod('shareLinkToFacebook', params);
   }
 }
