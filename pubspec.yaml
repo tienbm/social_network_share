@@ -1,6 +1,6 @@
 name: social_network_share
 description: A plugin for sharing contents to social media such as Facebook, Instargram, Twister
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/a313/social_network_share
 
 environment:
