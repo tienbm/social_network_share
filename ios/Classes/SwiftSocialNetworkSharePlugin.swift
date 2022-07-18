@@ -52,17 +52,28 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
                 }
                 result(false)
             }
+        }else if call.method == "sharePhotosToFacebook" {
+            if let arguments = call.arguments as? [String:Any] {
+                let paths = arguments["paths"] as! [String]
+                let requiredApp = arguments ["requiredApp"] as? Bool ?? false
+                sharePhotosToFacebook(withPaths: paths, withApp:requiredApp)
+            }else{
+                guard let result = self.result else {
+                    return
+                }
+                result(false)
+            }
         }else{
             result(FlutterMethodNotImplemented)
         }
     }
     
-    private func shareLinkToFacebook(withQuote quote: String?, withUrl urlString: String?,withHashTag hashTag: String?, withApp requiredApp: Bool) {
+    private func sharePhotosToFacebook(withPaths paths: [String],  withApp requiredApp: Bool) {
         
         if requiredApp {
             let installed = checkAppInstalled(SocialApp.Facebook)
             if installed {
-                shareToFacebook(withQuote:quote,urlString:urlString, withHashTag: hashTag)
+                sharePhotosToFacebook(withPaths:paths)
             } else {
                 openAppStore(SocialApp.Facebook)
                 guard let result = self.result else {
@@ -71,11 +82,54 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
                 result(false)
             }
         }else{
-            shareToFacebook(withQuote:quote,urlString:urlString, withHashTag: hashTag)
+            sharePhotosToFacebook(withPaths:paths)
         }
     }
     
-    private func shareToFacebook(withQuote quote: String?, urlString: String?,withHashTag hashTag: String?)
+    private func sharePhotosToFacebook(withPaths paths: [String])
+    {
+        var photos = [SharePhoto]()
+        for path in paths {
+            if let image = UIImage(contentsOfFile: path){
+                let photo = SharePhoto(image: image, userGenerated: true)
+                photos.append(photo)
+            }
+        }
+        
+        let shareContent = SharePhotoContent()
+        shareContent.photos = photos
+        
+        let dialog = ShareDialog(
+            viewController: UIApplication.shared.delegate?.window??.rootViewController,
+            content: shareContent,
+            delegate: self
+        )
+        dialog.show()
+        guard let result = self.result else {
+            return
+        }
+        result(true)
+    }
+    
+    private func shareLinkToFacebook(withQuote quote: String?, withUrl urlString: String?,withHashTag hashTag: String?, withApp requiredApp: Bool) {
+        
+        if requiredApp {
+            let installed = checkAppInstalled(SocialApp.Facebook)
+            if installed {
+                shareLinkToFacebook(withQuote:quote,urlString:urlString, withHashTag: hashTag)
+            } else {
+                openAppStore(SocialApp.Facebook)
+                guard let result = self.result else {
+                    return
+                }
+                result(false)
+            }
+        }else{
+            shareLinkToFacebook(withQuote:quote,urlString:urlString, withHashTag: hashTag)
+        }
+    }
+    
+    private func shareLinkToFacebook(withQuote quote: String?, urlString: String?,withHashTag hashTag: String?)
     {
         let shareContent = ShareLinkContent()
         if let url = urlString {

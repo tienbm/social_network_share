@@ -39,4 +39,31 @@ class SocialNetworkShare {
     });
     return await _channel.invokeMethod('shareLinkToFacebook', params);
   }
+
+  static Future<bool> sharePhotosToFacebook({
+    required List<String> paths,
+    bool requiredApp = false,
+    OnSuccess? onSuccess,
+    OnCancel? onCancel,
+    OnError? onError,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{
+      "paths": paths,
+      "requiredApp": requiredApp
+    };
+
+    _channel.setMethodCallHandler((call) {
+      switch (call.method) {
+        case "onSuccess":
+          return onSuccess?.call(call.arguments);
+        case "onCancel":
+          return onCancel?.call();
+        case "onError":
+          return onError?.call(call.arguments);
+        default:
+          throw UnsupportedError("Unknown method called");
+      }
+    });
+    return await _channel.invokeMethod('sharePhotosToFacebook', params);
+  }
 }
