@@ -23,7 +23,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import java.io.File
 
@@ -64,17 +63,17 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             val packageName = getSocialAppPackage(SocialApp.Facebook)
             try {
                 pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
-                shareToFacebook(quote, url, hashTag, result)
+                shareLinkToFB(quote, url, hashTag, result)
             } catch (e: PackageManager.NameNotFoundException) {
                 openPlayStore(SocialApp.Facebook)
                 result.success(false)
             }
         } else {
-            shareToFacebook(quote, url, hashTag, result)
+            shareLinkToFB(quote, url, hashTag, result)
         }
     }
 
-    private fun shareToFacebook(
+    private fun shareLinkToFB(
         quote: String?,
         url: String?,
         hashTag: String?,
@@ -120,24 +119,23 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             val packageName = getSocialAppPackage(SocialApp.Facebook)
             try {
                 pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
-                _sharePhotosToFacebook(paths, result)
+                sharePhotosToFB(paths, result)
             } catch (e: PackageManager.NameNotFoundException) {
                 openPlayStore(SocialApp.Facebook)
                 result.success(false)
             }
         } else {
-            _sharePhotosToFacebook(paths, result)
+            sharePhotosToFB(paths, result)
         }
     }
 
-    private fun _sharePhotosToFacebook(paths: List<String>, result: MethodChannel.Result) {
-
+    private fun sharePhotosToFB(paths: List<String>, result: MethodChannel.Result) {
         val content: SharePhotoContent
         var photos = arrayListOf<SharePhoto>()
         for (path in paths) {
             val media = File(path)
             val uri = FileProvider.getUriForFile(
-                activity, activity.packageName + ".social.share.fileprovider",
+                activity, activity.packageName + ".com.social_share",
                 media
             )
             val photo: SharePhoto = SharePhoto.Builder().setImageUrl(uri).build()
