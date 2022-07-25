@@ -9,3 +9,7 @@
 ## 0.0.3
 
 * Remove TODO in Android.
+
+## 0.0.4
+
+* Support Share Photos to Facebook.
