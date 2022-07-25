@@ -135,7 +135,7 @@ class SocialNetworkSharePlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         for (path in paths) {
             val media = File(path)
             val uri = FileProvider.getUriForFile(
-                activity, activity.packageName + ".com.social_share",
+                activity, activity.packageName + ".com.social_network_share",
                 media
             )
             val photo: SharePhoto = SharePhoto.Builder().setImageUrl(uri).build()

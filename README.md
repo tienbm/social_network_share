@@ -28,9 +28,19 @@ dependencies:
             android:value="@string/facebook_app_id" />
             
         <provider
-            android:name="com.facebook.FacebookContentProvider"
+            android:name="com.facebook.FacebookContentProvider{APP_ID}"
             android:authorities="com.facebook.app.FacebookContentProvider[facebook_app_id]"
             android:exported="false" />
+
+		<provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.com.social_network_share"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+		</provider>	
     </application>
 ```
 
@@ -38,6 +48,13 @@ dependencies:
 
 ```xml
 <string name="facebook_app_id">xxxxxxxxxx</string>
+```
+#### Create a xml file named `filepaths.xml` in the `app/src/main/res/xml` folder and paste this code in the file :
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="image" path="/"/>
+</paths>
 ```
 
 #### Read more update at: https://developers.facebook.com/docs/android/getting-started
