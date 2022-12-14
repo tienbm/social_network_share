@@ -91,7 +91,7 @@ public class SwiftSocialNetworkSharePlugin: NSObject, FlutterPlugin , SharingDel
         var photos = [SharePhoto]()
         for path in paths {
             if let image = UIImage(contentsOfFile: path){
-                let photo = SharePhoto(image: image, userGenerated: true)
+                let photo = SharePhoto(image: image, isUserGenerated: true)
                 photos.append(photo)
             }
         }
